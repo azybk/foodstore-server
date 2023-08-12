@@ -1,8 +1,8 @@
 const mongoose = require('mongoose')
-const { dbHost, dbPort, dbUser, dbPass, dbName } = require('../app/config')
+const { dbHost, dbPort, dbUser, dbPass, dbName, dbAuthSource } = require('../app/config')
 
-mongoose.connect(` mongodb://${dbUser}:${dbPass}@${dbHost}:${dbPort}/${dbName}`,
-    { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false, useCreateIndex: true } 
+mongoose.connect(`mongodb://${dbUser}:${dbPass}@${dbHost}:${dbPort}/${dbName}?authSource=${dbAuthSource}`,
+    { useNewUrlParser: true, useUnifiedTopology: true } 
 )
 
 const db = mongoose.connection
