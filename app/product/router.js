@@ -4,6 +4,9 @@ const productController = require('./controller')
 
 const os = require('os')
 
+router.get('/products', productController.index)
+
 router.post('/products', multer({dest: os.tmpdir()}).single('image'), productController.store)
+
 
 module.exports = router
