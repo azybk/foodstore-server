@@ -6,7 +6,11 @@ const os = require('os')
 
 router.get('/products', productController.index)
 
-router.post('/products', multer({dest: os.tmpdir()}).single('image'), productController.store)
+router.post('/product', multer({dest: os.tmpdir()}).single('image'), productController.store)
+
+router.put('/product/:id', multer({dest: os.tmpdir()}).single('image'), productController.update)
+
+router.delete('/product/:id', productController.destroy)
 
 
 module.exports = router
