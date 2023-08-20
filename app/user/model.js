@@ -2,8 +2,9 @@ const mongoose = require('mongoose')
 const { model, Schema } = mongoose
 
 const bcrypt = require('bcrypt')
-
 const HASH_ROUND = 10
+
+const AutoIncrement = require('mongoose-sequence')(mongoose)
 
 let userSchema = Schema({
     full_name: {
@@ -55,5 +56,7 @@ userSchema.pre('save', function(next) {
     this.password = bcrypt.hashSync(this.password, HASH_ROUND)
     next()
 })
+
+// userSchema.plugin(AutoIncrement, {inc_field: 'customer_id', disable_hooks: true})
 
 module.exports = model('User', userSchema)
