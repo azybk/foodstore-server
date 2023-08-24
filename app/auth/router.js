@@ -10,6 +10,8 @@ passport.use(new localStrategy({usernameField: 'email'}, controller.localStrateg
 
 router.post('/register', multer().none(), controller.register)
 router.post('/login', multer().none(), controller.login)
+router.get('/me', controller.me)
+router.post('/logout', controller.logout)
 
 
 module.exports = router

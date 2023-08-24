@@ -4,8 +4,20 @@ const config = require('../config')
 const fs = require('fs')
 const path = require('path')
 
+const { policyFor } = require('../policy')
+
 const store = async(req, res, next) => {
+
     try {
+
+        let policy = policyFor(req.user)
+        if(!policy.can('create', 'Product')) {
+            return res.json({
+                error: 1,
+                message: 'Anda tidak memiliki akses untuk membuat Produk'
+            })
+        }
+
         let payload = req.body
 
         if(req.file) {
@@ -70,8 +82,18 @@ const index = async(req, res, next) => {
     
     try {
         let { limit = 10, skip = 0 } = req.query
-        let products = await Product.find().limit(parseInt(limit)).skip(parseInt(skip))    
-        return res.json(products)
+        
+        // let products = await Product.find().limit(parseInt(limit)).skip(parseInt(skip))  
+        // return res.json(products)
+
+        let count = await Product.find().countDocuments()
+        let products = await Product.find().paginate(limit, skip).select('-__v')
+
+        return res.json({
+            data: products,
+            count
+        })
+
 
     } catch(err) {
         next(err)
@@ -80,6 +102,15 @@ const index = async(req, res, next) => {
 
 const update = async(req, res, next) => {
     try {
+
+        let policy = policyFor(req.user)
+        if(policy.can('update', 'Product')) {
+            res.json({
+                error: 1,
+                message: 'Anda tidak memilik akses untuk mengupdate Produk'
+            })
+        }
+
         let payload = req.body
 
         if(req.file) {
@@ -158,6 +189,15 @@ const update = async(req, res, next) => {
 
 const destroy = async(req, res, next) => {
     try {
+
+        let policy = policyFor(req.user) 
+        if(!policy.can('delete', 'Product')) {
+            return res.json({
+                error: 1,
+                message: 'Anda tidak memilik akses untuk menghapus Produk'
+            })
+        } 
+
         let product = await Product.findOneAndDelete({ _id: req.params.id })
         let currentImage = `${config.rootPath}/public/upload/${product.image_url}`
 
